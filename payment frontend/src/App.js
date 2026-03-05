@@ -193,8 +193,7 @@ function App() {
   return (
     <div className="App">
       <div className="container">
-        <h1>Payment Processing System</h1>
-        <p className="subtitle">Secure and efficient payment management platform</p>
+        <h1>💳 Payment Processing System</h1>
         
         <div className="tabs">
           <button 
