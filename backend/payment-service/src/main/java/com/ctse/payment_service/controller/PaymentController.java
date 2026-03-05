@@ -32,4 +32,9 @@ public class PaymentController {
                 .orElseThrow(() -> new RuntimeException("No payment found for orderId " + orderId))
         );
     }
+
+    @PutMapping("/{paymentId}/confirm")
+    public ResponseEntity<PaymentResponse> confirmPayment(@PathVariable Long paymentId) {
+        return ResponseEntity.ok(paymentService.confirmPayment(paymentId));
+    }
 }
