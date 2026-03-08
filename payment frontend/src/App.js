@@ -32,6 +32,10 @@ function App() {
 
   const API_BASE_URL = 'http://localhost:8082';
 
+  // Security: API key for service-to-service authentication.
+  // In production this would be injected via environment variable (REACT_APP_INTERNAL_API_KEY).
+  const INTERNAL_API_KEY = process.env.REACT_APP_INTERNAL_API_KEY || 'sb_secret_f8ZhPKXhsVr4okTJAhuxhQ_d016z0wL';
+
   const handleProcessPayment = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -52,6 +56,7 @@ function App() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-Internal-API-Key': INTERNAL_API_KEY,
         },
         body: JSON.stringify({
           orderId: parseInt(orderId),
@@ -121,7 +126,7 @@ function App() {
     try {
       const response = await fetch(`${API_BASE_URL}/payments/${paymentResult.paymentId}/confirm`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json', 'X-Internal-API-Key': INTERNAL_API_KEY }
       });
       
       if (response.ok) {
@@ -148,7 +153,9 @@ function App() {
     setPaymentDetails(null);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/payments/${searchOrderId}`);
+      const response = await fetch(`${API_BASE_URL}/payments/${searchOrderId}`, {
+        headers: { 'X-Internal-API-Key': INTERNAL_API_KEY }
+      });
 
       if (response.ok) {
         const data = await response.json();
@@ -171,7 +178,7 @@ function App() {
     try {
       const response = await fetch(`${API_BASE_URL}/payments/${paymentDetails.paymentId}/confirm`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json', 'X-Internal-API-Key': INTERNAL_API_KEY }
       });
       
       if (response.ok) {

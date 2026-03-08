@@ -3,25 +3,47 @@ package com.ctse.payment_service.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
+import java.util.List;
 
+/**
+ * CORS configuration.
+ *
+ * Returns a {@link CorsConfigurationSource} bean so that Spring Security's
+ * {@code .cors(Customizer.withDefaults())} in SecurityConfig can pick it up
+ * automatically.  This is the Spring-recommended approach for Spring Security 6+.
+ *
+ * Security hardening:
+ * - Explicit header allowlist instead of wildcard "*" (wildcard + credentials=true is OWASP risk).
+ * - X-Internal-API-Key is included so the frontend can send it to authenticate.
+ * - maxAge caches the preflight result for 1 hour to reduce preflight round-trips.
+ */
 @Configuration
 public class CorsConfig {
 
     @Bean
-    public CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        
+
         config.setAllowCredentials(true);
         config.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
-        config.setAllowedHeaders(Arrays.asList("*"));
+
+        // Explicit header allowlist – never use "*" alongside allowCredentials=true
+        config.setAllowedHeaders(List.of(
+                "Content-Type",
+                "Accept",
+                "Origin",
+                "X-Internal-API-Key"
+        ));
+
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        
+        config.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
+        return source;
     }
 }

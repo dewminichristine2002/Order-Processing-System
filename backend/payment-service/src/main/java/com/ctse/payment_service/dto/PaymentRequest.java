@@ -4,15 +4,23 @@ import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 
 public class PaymentRequest {
+
     @NotNull
+    @Positive
     private Long orderId;
 
     @NotNull
-    @DecimalMin(value = "0.0", inclusive = true)
+    @DecimalMin(value = "0.01", inclusive = true)
+    @Digits(integer = 8, fraction = 2)
     private BigDecimal amount;
 
+    /**
+     * Valid values: Cash, BANK_TRANSFER, CHEQUE
+     * Size-capped to prevent oversized payload injection.
+     */
     @NotBlank
-    private String paymentMethod; // CASH/CARD/BANK_TRANSFER
+    @Size(min = 2, max = 50, message = "paymentMethod must be between 2 and 50 characters")
+    private String paymentMethod; // Cash / BANK_TRANSFER / CHEQUE
 
     // getters & setters
     public Long getOrderId() { return orderId; }

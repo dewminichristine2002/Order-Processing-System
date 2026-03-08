@@ -20,6 +20,21 @@ spec:
       labels:
         app: payment-service
     spec:
+      # ── Pod-level security context ────────────────────────────────────────
+      # runAsNonRoot: Kubernetes refuses to start the pod if the container
+      # image tries to run as UID 0 (root).
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000        # matches 'appuser' UID created in Dockerfile
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault   # restrict syscalls to a safe default allowlist
+
+      # Prevent automounting the service-account token (least privilege:
+      # the payment-service does not need to call the Kubernetes API)
+      automountServiceAccountToken: false
+
       containers:
         - name: payment-service
           # The CD workflow replaces IMAGE_PLACEHOLDER with the real tag
@@ -32,6 +47,19 @@ spec:
                 name: payment-service-config
             - secretRef:
                 name: payment-service-secret
+          # ── Container-level security context ───────────────────────────────
+          securityContext:
+            allowPrivilegeEscalation: false   # cannot gain more privileges than parent
+            readOnlyRootFilesystem: true       # immutable container filesystem
+            runAsNonRoot: true
+            runAsUser: 1000
+            capabilities:
+              drop:
+                - ALL                          # drop all Linux capabilities
+          # Writable tmp volume (Spring Boot needs /tmp for temporary files)
+          volumeMounts:
+            - name: tmp-volume
+              mountPath: /tmp
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
@@ -53,3 +81,6 @@ spec:
             limits:
               cpu: "500m"
               memory: "512Mi"
+      volumes:
+        - name: tmp-volume
+          emptyDir: {}

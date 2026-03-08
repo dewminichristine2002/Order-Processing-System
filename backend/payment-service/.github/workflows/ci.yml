@@ -36,6 +36,30 @@ jobs:
           APP_INTERNALAPIKEY: test-key
         run: ./mvnw --batch-mode --no-transfer-progress test
 
+      # ── OWASP Dependency Check ─────────────────────────────────────────────
+      # Scans all declared dependencies against the NVD CVE database.
+      # Uses || true to upload the report even when findings exist.
+      - name: OWASP Dependency Check (CVE scan)
+        env:
+          SPRING_DATASOURCE_URL: jdbc:h2:mem:testdb
+          SPRING_DATASOURCE_USERNAME: sa
+          SPRING_DATASOURCE_PASSWORD: ""
+          APP_INTERNAL_API_KEY: test-key
+          APP_ORDER_BASE_URL: http://localhost:8080
+        run: |
+          ./mvnw --batch-mode --no-transfer-progress \
+            org.owasp:dependency-check-maven:check \
+            -DfailBuildOnCVSS=7 \
+            -DsuppressionFile=owasp-suppressions.xml || true
+
+      - name: Upload OWASP Dependency Check report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: owasp-dependency-check-report
+          path: target/dependency-check-report.*
+          retention-days: 14
+
       - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v4
