@@ -20,6 +20,15 @@ export async function createProduct(payload) {
   return res.data;
 }
 
+export async function updateProduct(productId, payload) {
+  const res = await api.put(`/inventory/products/${productId}`, payload);
+  return res.data;
+}
+
+export async function deleteProduct(productId) {
+  await api.delete(`/inventory/products/${productId}`);
+}
+
 export async function reduceStock(productId, payload) {
   const res = await api.put(`/inventory/reduce-stock/${productId}`, payload);
   return res.data;

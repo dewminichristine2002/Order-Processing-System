@@ -10,12 +10,16 @@ import org.springframework.web.ErrorResponseException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(ProductNotFoundException.class)
     public org.springframework.http.ResponseEntity<ApiError> handleNotFound(ProductNotFoundException ex, HttpServletRequest req) {
@@ -47,6 +51,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public org.springframework.http.ResponseEntity<ApiError> handleGeneric(Exception ex, HttpServletRequest req) {
+        log.error("Unhandled exception for {}: {}", req.getRequestURI(), ex.getMessage(), ex);
         return toResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error", req.getRequestURI());
     }
 

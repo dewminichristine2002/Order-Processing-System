@@ -4,6 +4,7 @@ import com.ctse.inventory_service.inventory.client.OrderServiceClient;
 import com.ctse.inventory_service.inventory.client.dto.StockUpdatedNotification;
 import com.ctse.inventory_service.inventory.dto.CreateProductRequest;
 import com.ctse.inventory_service.inventory.dto.ReduceStockRequest;
+import com.ctse.inventory_service.inventory.dto.UpdateProductRequest;
 import com.ctse.inventory_service.inventory.entity.Product;
 import com.ctse.inventory_service.inventory.entity.StockUpdate;
 import com.ctse.inventory_service.inventory.exception.InsufficientStockException;
@@ -94,6 +95,40 @@ public class InventoryService {
 
         notifyOrderService(saved);
         return saved;
+    }
+
+    @Transactional
+    public Product updateProduct(Integer productId, UpdateProductRequest request) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException(productId));
+
+        int previousQty = product.getStockQuantity();
+        int newQty = request.stockQuantity();
+        if (previousQty != newQty) {
+            StockUpdate update = new StockUpdate();
+            update.setProductId(productId);
+            update.setPreviousQuantity(previousQty);
+            update.setNewQuantity(newQty);
+            update.setChangeAmount(newQty - previousQty);
+            update.setReason("ADMIN_SET_STOCK");
+            update.setReferenceId("ADMIN");
+            update.setCreatedAt(Instant.now());
+            stockUpdateRepository.save(update);
+        }
+
+        product.setProductName(request.productName());
+        product.setStockQuantity(newQty);
+        product.setPrice(request.price());
+        return productRepository.save(product);
+    }
+
+    @Transactional
+    public void deleteProduct(Integer productId) {
+        if (!productRepository.existsById(productId)) {
+            throw new ProductNotFoundException(productId);
+        }
+        stockUpdateRepository.deleteByProductId(productId);
+        productRepository.deleteById(productId);
     }
 
     public Page<StockUpdate> getStockUpdates(Integer productId, Pageable pageable) {

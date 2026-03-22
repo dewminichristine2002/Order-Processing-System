@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { fetchProducts } from "../api/inventoryApi";
+import { deleteProduct, fetchProducts } from "../api/inventoryApi";
 import { useNavigate } from "react-router-dom";
 import { ProductCell, ProgressCell, StatusBadge, formatMoney, getStatus } from "../components/ui";
 
@@ -10,6 +10,7 @@ export default function ProductsListPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [notice, setNotice] = useState("");
 
   useEffect(() => {
     let mounted = true;
@@ -31,6 +32,22 @@ export default function ProductsListPage() {
       mounted = false;
     };
   }, []);
+
+  async function onDelete(productId) {
+    setError("");
+    setNotice("");
+
+    const ok = window.confirm(`Delete product ${productId}? This cannot be undone.`);
+    if (!ok) return;
+
+    try {
+      await deleteProduct(productId);
+      setProducts((prev) => prev.filter((p) => p.productId !== productId));
+      setNotice("Product deleted.");
+    } catch (e) {
+      setError(e?.response?.data?.message || e.message || "Failed to delete product.");
+    }
+  }
 
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -102,6 +119,7 @@ export default function ProductsListPage() {
         <div style={{ height: 12 }} />
 
         {error ? <div className="msg msg-error">{error}</div> : null}
+        {notice ? <div className="msg">{notice}</div> : null}
         {loading ? (
           <div>Loading...</div>
         ) : (
@@ -128,9 +146,26 @@ export default function ProductsListPage() {
                     <td><StatusBadge stockQuantity={p.stockQuantity} /></td>
                     <td><ProgressCell value={p.stockQuantity} max={maxStock} /></td>
                     <td>
-                      <button className="btn btn-outline btn-sm" onClick={() => navigate(`/products/${p.productId}`)}>
-                        👁 View
-                      </button>
+                      <div className="row" style={{ gap: 8, flexWrap: "wrap" }}>
+                        <button
+                          className="btn btn-outline btn-sm"
+                          onClick={() => navigate(`/products/${p.productId}`)}
+                        >
+                          👁 View
+                        </button>
+                        <button
+                          className="btn btn-outline btn-sm"
+                          onClick={() => navigate(`/products/${p.productId}/edit`)}
+                        >
+                          ✏ Edit
+                        </button>
+                        <button
+                          className="btn btn-danger btn-sm"
+                          onClick={() => onDelete(p.productId)}
+                        >
+                          🗑 Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );

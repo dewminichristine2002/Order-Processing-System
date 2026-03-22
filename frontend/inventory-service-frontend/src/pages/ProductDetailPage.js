@@ -1,16 +1,22 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { fetchProduct, fetchStockUpdates } from "../api/inventoryApi";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { deleteProduct, fetchProduct, fetchStockUpdates } from "../api/inventoryApi";
 import { ProductCell, ProgressCell, StatusBadge, formatMoney } from "../components/ui";
+import { addToCart } from "../customer/cart";
 
 export default function ProductDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isCustomer =
+    location.pathname === "/shop" || location.pathname.startsWith("/shop/");
+  const noticeTimerRef = useRef(null);
 
   const [product, setProduct] = useState(null);
   const [updatesPage, setUpdatesPage] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [notice, setNotice] = useState("");
 
   useEffect(() => {
     let mounted = true;
@@ -52,19 +58,49 @@ export default function ProductDetailPage() {
     return Math.max(1, localMax);
   }, [product, updates]);
 
+  const onAddToCart = () => {
+    if (!product) return;
+    addToCart(product.productId, 1);
+    setNotice("Added to cart.");
+    if (noticeTimerRef.current) window.clearTimeout(noticeTimerRef.current);
+    noticeTimerRef.current = window.setTimeout(() => setNotice(""), 1500);
+  };
+
+  const onDelete = async () => {
+    if (!product) return;
+    setError("");
+    setNotice("");
+    const ok = window.confirm(`Delete product ${product.productId}? This cannot be undone.`);
+    if (!ok) return;
+    try {
+      await deleteProduct(product.productId);
+      navigate("/products");
+    } catch (e) {
+      setError(e?.response?.data?.message || e.message || "Failed to delete product.");
+    }
+  };
+
   return (
     <div>
       <div className="row" style={{ justifyContent: "space-between" }}>
         <div>
-          <div className="section-label">Catalog</div>
-          <h1 className="page-title" style={{ margin: 0 }}>Product Detail</h1>
+          <div className="section-label">{isCustomer ? "Shop" : "Catalog"}</div>
+          <h1 className="page-title" style={{ margin: 0 }}>
+            Product Detail
+          </h1>
         </div>
-        <button className="btn btn-outline btn-pill" onClick={() => navigate("/products")}>Back</button>
+        <button
+          className="btn btn-outline btn-pill"
+          onClick={() => navigate(isCustomer ? "/shop" : "/products")}
+        >
+          Back
+        </button>
       </div>
 
       <div style={{ height: 12 }} />
 
       {error ? <div className="msg msg-error">{error}</div> : null}
+      {notice ? <div className="msg">{notice}</div> : null}
 
       {loading ? (
         <div className="card">Loading...</div>
@@ -92,7 +128,7 @@ export default function ProductDetailPage() {
               </div>
               <div>
                 <div className="small">Price</div>
-                <div style={{ fontWeight: 950, fontSize: 18, color: "#635bff" }}>{formatMoney(product.price)}</div>
+                <div style={{ fontWeight: 950, fontSize: 18 }}>{formatMoney(product.price)}</div>
               </div>
             </div>
 
@@ -104,56 +140,90 @@ export default function ProductDetailPage() {
 
             <div style={{ height: 14 }} />
 
-            <div className="row">
-              <button
-                className="btn btn-danger"
-                onClick={() => navigate("/reduce-stock", { state: { productId: product.productId } })}
-              >
-                ↓ Reduce Stock
-              </button>
-              <button className="btn btn-outline" onClick={() => navigate("/stock-updates")}>View Updates</button>
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="card-header">
-              <div>
-                <div className="card-title">Stock Update History</div>
-                <div className="card-sub">Most recent events</div>
+            {isCustomer ? (
+              <div className="row">
+                <button
+                  className="btn"
+                  disabled={(Number(product.stockQuantity) || 0) <= 0}
+                  onClick={onAddToCart}
+                >
+                  🛒 Add to Cart
+                </button>
               </div>
-            </div>
-
-            {updates.length === 0 ? (
-              <div className="small">No updates yet.</div>
             ) : (
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Change</th>
-                    <th>New Qty</th>
-                    <th>Status</th>
-                    <th>Order ID</th>
-                    <th>Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {updates.map((u) => (
-                    <tr key={u.id}>
-                      <td>
-                        <span className={(Number(u.changeAmount) || 0) < 0 ? "badge badge-red" : "badge badge-green"}>
-                          {u.changeAmount}
-                        </span>
-                      </td>
-                      <td>{u.newQuantity}</td>
-                      <td><StatusBadge stockQuantity={u.newQuantity} /></td>
-                      <td>{u.referenceId || "-"}</td>
-                      <td>{u.createdAt ? new Date(u.createdAt).toLocaleString() : "-"}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <div className="row">
+                <button
+                  className="btn btn-danger"
+                  onClick={() =>
+                    navigate("/reduce-stock", { state: { productId: product.productId } })
+                  }
+                >
+                  ↓ Reduce Stock
+                </button>
+                <button className="btn btn-outline" onClick={() => navigate("/stock-updates")}>
+                  View Updates
+                </button>
+                <button className="btn btn-outline" onClick={() => navigate(`/products/${product.productId}/edit`)}>
+                  ✏ Edit
+                </button>
+                <button className="btn btn-danger" onClick={onDelete}>
+                  🗑 Delete
+                </button>
+              </div>
             )}
           </div>
+
+          {isCustomer ? null : (
+            <div className="card">
+              <div className="card-header">
+                <div>
+                  <div className="card-title">Stock Update History</div>
+                  <div className="card-sub">Most recent events</div>
+                </div>
+              </div>
+
+              {updates.length === 0 ? (
+                <div className="small">No updates yet.</div>
+              ) : (
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th>Change</th>
+                      <th>New Qty</th>
+                      <th>Status</th>
+                      <th>Order ID</th>
+                      <th>Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {updates.map((u) => (
+                      <tr key={u.id}>
+                        <td>
+                          <span
+                            className={
+                              (Number(u.changeAmount) || 0) < 0
+                                ? "badge badge-red"
+                                : "badge badge-green"
+                            }
+                          >
+                            {u.changeAmount}
+                          </span>
+                        </td>
+                        <td>{u.newQuantity}</td>
+                        <td>
+                          <StatusBadge stockQuantity={u.newQuantity} />
+                        </td>
+                        <td>{u.referenceId || "-"}</td>
+                        <td>
+                          {u.createdAt ? new Date(u.createdAt).toLocaleString() : "-"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface StockUpdateRepository extends JpaRepository<StockUpdate, Long> {
     Page<StockUpdate> findByProductIdOrderByCreatedAtDesc(Integer productId, Pageable pageable);
+
+    void deleteByProductId(Integer productId);
 }

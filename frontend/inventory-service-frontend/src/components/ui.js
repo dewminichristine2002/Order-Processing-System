@@ -3,9 +3,9 @@ import React from 'react';
 export function formatMoney(value) {
   const numberValue = Number(value);
   if (Number.isNaN(numberValue)) return String(value ?? '');
-  return numberValue.toLocaleString(undefined, {
+  return numberValue.toLocaleString('en-LK', {
     style: 'currency',
-    currency: 'USD',
+    currency: 'LKR',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });

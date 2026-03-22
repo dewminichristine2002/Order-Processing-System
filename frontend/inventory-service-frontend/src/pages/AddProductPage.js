@@ -116,7 +116,7 @@ export default function AddProductPage() {
             </div>
 
             <div>
-              <div className="label">Price (USD)</div>
+              <div className="label">Price (LKR)</div>
               <input className="input" placeholder="e.g. 299.99" type="number" min="0" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} />
               {price ? <div className="small">Preview: {formatMoney(price)}</div> : null}
             </div>

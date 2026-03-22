@@ -6,8 +6,10 @@ import DashboardPage from "./pages/DashboardPage";
 import ProductsListPage from "./pages/ProductsListPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import AddProductPage from "./pages/AddProductPage";
+import EditProductPage from "./pages/EditProductPage";
 import ReduceStockPage from "./pages/ReduceStockPage";
 import StockUpdatesPage from "./pages/StockUpdatesPage";
+import ShopPage from "./pages/ShopPage";
 
 export default function App() {
   return (
@@ -17,8 +19,11 @@ export default function App() {
         <main className="container">
           <Routes>
             <Route path="/" element={<DashboardPage />} />
+            <Route path="/shop" element={<ShopPage />} />
+            <Route path="/shop/products/:id" element={<ProductDetailPage />} />
             <Route path="/products" element={<ProductsListPage />} />
             <Route path="/products/:id" element={<ProductDetailPage />} />
+            <Route path="/products/:id/edit" element={<EditProductPage />} />
             <Route path="/add-product" element={<AddProductPage />} />
             <Route path="/reduce-stock" element={<ReduceStockPage />} />
             <Route path="/stock-updates" element={<StockUpdatesPage />} />

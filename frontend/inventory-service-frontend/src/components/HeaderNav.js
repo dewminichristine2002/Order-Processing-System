@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
 function NavItem({ to, end, icon, children }) {
   return (
@@ -15,6 +15,10 @@ function NavItem({ to, end, icon, children }) {
 }
 
 export default function HeaderNav() {
+  const location = useLocation();
+  const isCustomer =
+    location.pathname === "/shop" || location.pathname.startsWith("/shop/");
+
   return (
     <header className="header">
       <div className="header-inner">
@@ -27,21 +31,32 @@ export default function HeaderNav() {
         </div>
 
         <nav className="nav" aria-label="Primary">
-          <NavItem to="/" end icon="🏠">
-            Dashboard
-          </NavItem>
-          <NavItem to="/products" icon="▢">
-            Products
-          </NavItem>
-          <NavItem to="/add-product" icon="＋">
-            Add Product
-          </NavItem>
-          <NavItem to="/reduce-stock" icon="↓">
-            Reduce Stock
-          </NavItem>
-          <NavItem to="/stock-updates" icon="〰">
-            Stock Updates
-          </NavItem>
+          {isCustomer ? (
+            <NavItem to="/shop" icon="🛒">
+              Shop
+            </NavItem>
+          ) : (
+            <>
+              <NavItem to="/shop" icon="🛒">
+                Shop
+              </NavItem>
+              <NavItem to="/" end icon="🏠">
+                Dashboard
+              </NavItem>
+              <NavItem to="/products" icon="▢">
+                Products
+              </NavItem>
+              <NavItem to="/add-product" icon="＋">
+                Add Product
+              </NavItem>
+              <NavItem to="/reduce-stock" icon="↓">
+                Reduce Stock
+              </NavItem>
+              <NavItem to="/stock-updates" icon="〰">
+                Stock Updates
+              </NavItem>
+            </>
+          )}
         </nav>
 
         <div className="header-spacer" />

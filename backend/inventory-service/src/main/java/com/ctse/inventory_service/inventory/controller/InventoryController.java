@@ -4,10 +4,12 @@ import com.ctse.inventory_service.inventory.dto.CreateProductRequest;
 import com.ctse.inventory_service.inventory.dto.ProductResponse;
 import com.ctse.inventory_service.inventory.dto.ReduceStockRequest;
 import com.ctse.inventory_service.inventory.dto.StockUpdateResponse;
+import com.ctse.inventory_service.inventory.dto.UpdateProductRequest;
 import com.ctse.inventory_service.inventory.entity.Product;
 import com.ctse.inventory_service.inventory.entity.StockUpdate;
 import com.ctse.inventory_service.inventory.service.InventoryService;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -50,6 +52,20 @@ public class InventoryController {
     @ResponseStatus(HttpStatus.CREATED)
     public ProductResponse createProduct(@Valid @RequestBody CreateProductRequest request) {
         return toProductResponse(inventoryService.createProduct(request));
+    }
+
+    @PutMapping("/products/{productId}")
+    public ProductResponse updateProduct(
+            @PathVariable Integer productId,
+            @Valid @RequestBody UpdateProductRequest request
+    ) {
+        return toProductResponse(inventoryService.updateProduct(productId, request));
+    }
+
+    @DeleteMapping("/products/{productId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteProduct(@PathVariable Integer productId) {
+        inventoryService.deleteProduct(productId);
     }
 
     @PutMapping("/reduce-stock/{productId}")

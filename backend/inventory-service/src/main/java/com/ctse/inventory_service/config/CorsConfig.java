@@ -10,27 +10,27 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/inventory/**")
-                .allowedOrigins(
-                        "http://localhost:3000",
-                        "http://127.0.0.1:3000"
+                .allowedOriginPatterns(
+                        "http://localhost:*",
+                        "http://127.0.0.1:*"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .maxAge(3600);
 
         registry.addMapping("/v3/api-docs/**")
-                .allowedOrigins(
-                        "http://localhost:3000",
-                        "http://127.0.0.1:3000"
+                .allowedOriginPatterns(
+                        "http://localhost:*",
+                        "http://127.0.0.1:*"
                 )
                 .allowedMethods("GET", "OPTIONS")
                 .allowedHeaders("*")
                 .maxAge(3600);
 
         registry.addMapping("/swagger-ui/**")
-                .allowedOrigins(
-                        "http://localhost:3000",
-                        "http://127.0.0.1:3000"
+                .allowedOriginPatterns(
+                        "http://localhost:*",
+                        "http://127.0.0.1:*"
                 )
                 .allowedMethods("GET", "OPTIONS")
                 .allowedHeaders("*")
