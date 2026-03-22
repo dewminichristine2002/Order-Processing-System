@@ -51,6 +51,23 @@ class InventoryControllerTest {
                 .andExpect(status().isConflict());
     }
 
+        @Test
+        void increaseStock_updatesQuantity() throws Exception {
+        mockMvc().perform(post("/inventory/products")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"productId\":102,\"productName\":\"Restock Me\",\"stockQuantity\":10,\"price\":10.00}"))
+            .andExpect(status().isCreated());
+
+        mockMvc().perform(put("/inventory/increase-stock/102")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"quantity\":5,\"referenceId\":\"RESTOCK-1\"}"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.productId").value(102))
+            .andExpect(jsonPath("$.changeAmount").value(5))
+            .andExpect(jsonPath("$.newQuantity").value(15))
+            .andExpect(jsonPath("$.referenceId").value("RESTOCK-1"));
+        }
+
     @Test
     void updateProduct_updatesFields() throws Exception {
         mockMvc().perform(post("/inventory/products")

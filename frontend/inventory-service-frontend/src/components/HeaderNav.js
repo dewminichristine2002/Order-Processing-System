@@ -52,6 +52,9 @@ export default function HeaderNav() {
               <NavItem to="/reduce-stock" icon="↓">
                 Reduce Stock
               </NavItem>
+              <NavItem to="/increase-stock" icon="↑">
+                Increase Stock
+              </NavItem>
               <NavItem to="/stock-updates" icon="〰">
                 Stock Updates
               </NavItem>

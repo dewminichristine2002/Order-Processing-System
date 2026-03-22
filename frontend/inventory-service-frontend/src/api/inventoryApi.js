@@ -34,6 +34,11 @@ export async function reduceStock(productId, payload) {
   return res.data;
 }
 
+export async function increaseStock(productId, payload) {
+  const res = await api.put(`/inventory/increase-stock/${productId}`, payload);
+  return res.data;
+}
+
 export async function fetchStockUpdates({ productId, page = 0, size = 200 } = {}) {
   const params = { page, size };
   if (productId !== undefined && productId !== null && productId !== "") {
