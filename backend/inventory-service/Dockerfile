@@ -15,8 +15,8 @@ RUN mvn -B -q -DskipTests package
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 
-# Spring Boot default
-EXPOSE 8080
+# Inventory service port
+EXPOSE 8083
 
 # Copy the built jar
 COPY --from=build /workspace/target/*SNAPSHOT.jar /app/app.jar

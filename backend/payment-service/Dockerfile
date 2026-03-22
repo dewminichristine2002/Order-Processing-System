@@ -1,23 +1,22 @@
-# ── Runtime image ────────────────────────────────────────────────────────────
-# Use a minimal JRE (not JDK) image to reduce attack surface.
-# eclipse-temurin:21-jre is a well-maintained, regularly patched base image.
+# syntax=docker/dockerfile:1
+
+# ---- Build stage ----
+FROM maven:3.9.9-eclipse-temurin-21 AS build
+WORKDIR /workspace
+
+COPY pom.xml ./
+RUN mvn -B -q -DskipTests dependency:go-offline
+
+COPY src ./src
+RUN mvn -B -q -DskipTests package
+
+# ---- Runtime stage ----
 FROM eclipse-temurin:21-jre
-
-# ── Security: run as a non-root user ─────────────────────────────────────────
-# Principle of least privilege: the JVM process runs as 'appuser' (UID 1000)
-# which has no shell, no home directory, and cannot escalate privileges.
-RUN groupadd --system appgroup && \
-    useradd  --system --no-create-home --gid appgroup appuser
-
 WORKDIR /app
-
-# Copy JAR owned by root so 'appuser' can read/execute it but not modify it
-COPY --chown=root:appgroup target/payment-service-0.0.1-SNAPSHOT.jar payment-service.jar
-
-# Switch to unprivileged user before starting the process
-USER appuser
 
 EXPOSE 8082
 
-# Use exec-form (not shell-form) so signals (SIGTERM) are delivered to the JVM
-ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "payment-service.jar"]
+COPY --from=build /workspace/target/*SNAPSHOT.jar /app/app.jar
+
+ENV JAVA_OPTS="-XX:MaxRAMPercentage=75.0"
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]
