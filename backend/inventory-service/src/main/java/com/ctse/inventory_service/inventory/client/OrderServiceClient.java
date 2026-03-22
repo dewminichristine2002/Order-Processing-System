@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(
         name = "orderServiceClient",
-        url = "${inventory.order-service.base-url}",
-        path = "${inventory.order-service.notify-path}"
+    url = "${inventory.order-service.base-url:http://localhost:8080}",
+    path = "${inventory.order-service.notify-path:/orders/stock-updated}"
 )
 public interface OrderServiceClient {
 
