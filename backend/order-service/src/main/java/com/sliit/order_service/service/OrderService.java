@@ -121,25 +121,16 @@ public class OrderService {
 
         WebClient webClient = webClientBuilder.build();
 
-        try {
-            if (status.equals("PAID")) {
-                webClient.put()
-                    .uri(inventoryUrl + "/1")
-                    .retrieve()
-                    .bodyToMono(Void.class)
-                    .block();
-            }
-
-            if (status.equals("PROCESSING")) {
+        if ("PAID".equalsIgnoreCase(status)) {
+            try {
                 webClient.post()
-                    .uri(shippingUrl)
-                    .bodyValue(order)
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
+                        .uri(shippingUrl + "/" + order.getOrderId())
+                        .retrieve()
+                        .bodyToMono(Void.class)
+                        .block();
+            } catch (Exception e) {
+                System.out.println("Service call failed: " + e.getMessage());
             }
-        } catch (Exception e) {
-            System.out.println("Service call failed: " + e.getMessage());
         }
 
         return "Order updated to " + status;
