@@ -75,6 +75,8 @@ public class SecurityConfig {
 
             // ── Authorisation rules ───────────────────────────────────────────
             .authorizeHttpRequests(auth -> auth
+                // Public home endpoint for smoke test / basic reachability checks
+                .requestMatchers("/").permitAll()
                 // Kubernetes probes – no auth required
                 .requestMatchers(
                     "/actuator/health",
