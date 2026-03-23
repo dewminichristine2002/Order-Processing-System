@@ -3,6 +3,7 @@ version: '3.8'
 services:
 
   api-gateway:
+    image: 20026460/order-processing-api-gateway:latest
     build: ./api-gateway
     ports:
       - "8080:8080"
@@ -18,6 +19,7 @@ services:
       - shipping-service
 
   order-service:
+    image: 20026460/order-processing-order-service:latest
     build: ./order-service
     ports:
       - "8081:8081"
@@ -28,9 +30,10 @@ services:
       SPRING_JPA_HIBERNATE_DDL_AUTO: ${ORDER_JPA_DDL_AUTO:-update}
       SERVICES_PAYMENT_URL: http://api-gateway:8080/payments/process
       SERVICES_INVENTORY_URL: http://api-gateway:8080/inventory/reduce-stock/
-      SERVICES_SHIPPING_URL: http://api-gateway:8080/shipping/create
+      SERVICES_SHIPPING_URL: http://api-gateway:8080/shipping/from-order
 
   payment-service:
+    image: 20026460/order-processing-payment-service:latest
     build: ./payment-service
     ports:
       - "8082:8082"
@@ -43,6 +46,7 @@ services:
       APP_INTERNAL_API_KEY: ${APP_INTERNAL_API_KEY}
 
   inventory-service:
+    image: 20026460/order-processing-inventory-service:latest
     build: ./inventory-service
     ports:
       - "8083:8083"
@@ -57,6 +61,7 @@ services:
       ORDER_SERVICE_INTEGRATION_ENABLED: "true"
 
   shipping-service:
+    image: 20026460/order-processing-shipping-service:latest
     build: ./shipping-service
     ports:
       - "8084:8084"

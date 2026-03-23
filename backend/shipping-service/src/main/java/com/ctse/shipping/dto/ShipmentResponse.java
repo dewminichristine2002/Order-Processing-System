@@ -11,6 +11,8 @@ public class ShipmentResponse {
     private final String email;
     private final String shipmentStatus;
     private final LocalDateTime shipmentDate;
+    private final LocalDateTime estimatedDelivery;
+    private final String deliveryPerson;
 
     private ShipmentResponse(Builder builder) {
         this.shipmentId = builder.shipmentId;
@@ -21,6 +23,8 @@ public class ShipmentResponse {
         this.email = builder.email;
         this.shipmentStatus = builder.shipmentStatus;
         this.shipmentDate = builder.shipmentDate;
+        this.estimatedDelivery = builder.estimatedDelivery;
+        this.deliveryPerson = builder.deliveryPerson;
     }
 
     public static Builder builder() {
@@ -59,6 +63,14 @@ public class ShipmentResponse {
         return shipmentDate;
     }
 
+    public LocalDateTime getEstimatedDelivery() {
+        return estimatedDelivery;
+    }
+
+    public String getDeliveryPerson() {
+        return deliveryPerson;
+    }
+
     public static class Builder {
         private Long shipmentId;
         private Long orderId;
@@ -68,6 +80,8 @@ public class ShipmentResponse {
         private String email;
         private String shipmentStatus;
         private LocalDateTime shipmentDate;
+        private LocalDateTime estimatedDelivery;
+        private String deliveryPerson;
 
         public Builder shipmentId(Long shipmentId) {
             this.shipmentId = shipmentId;
@@ -106,6 +120,16 @@ public class ShipmentResponse {
 
         public Builder shipmentDate(LocalDateTime shipmentDate) {
             this.shipmentDate = shipmentDate;
+            return this;
+        }
+
+        public Builder estimatedDelivery(LocalDateTime estimatedDelivery) {
+            this.estimatedDelivery = estimatedDelivery;
+            return this;
+        }
+
+        public Builder deliveryPerson(String deliveryPerson) {
+            this.deliveryPerson = deliveryPerson;
             return this;
         }
 

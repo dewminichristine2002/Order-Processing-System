@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ctse.shipping.dto.DeliveryPersonAssignmentRequest;
 import com.ctse.shipping.dto.ShipmentCreateRequest;
+import com.ctse.shipping.dto.OrderDetailsResponse;
 import com.ctse.shipping.dto.ShipmentResponse;
 import com.ctse.shipping.dto.ShipmentStatusUpdateRequest;
 import com.ctse.shipping.service.ShipmentService;
@@ -35,6 +37,17 @@ public class ShipmentController {
         return shipmentService.createShipment(request);
     }
 
+    @PostMapping("/from-order/{orderId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ShipmentResponse createShipmentFromOrder(@PathVariable Long orderId) {
+        return shipmentService.createShipmentFromOrder(orderId);
+    }
+
+    @GetMapping("/order-details/{orderId}")
+    public OrderDetailsResponse getOrderDetails(@PathVariable Long orderId) {
+        return shipmentService.getOrderDetails(orderId);
+    }
+
     @GetMapping("/{orderId}")
     public ShipmentResponse getShipmentByOrderId(@PathVariable Long orderId) {
         return shipmentService.getShipmentByOrderId(orderId);
@@ -49,5 +62,17 @@ public class ShipmentController {
     public ShipmentResponse updateShipmentStatus(@PathVariable("id") Long shipmentId,
                                                  @Valid @RequestBody ShipmentStatusUpdateRequest request) {
         return shipmentService.updateShipmentStatus(shipmentId, request);
+    }
+
+    @PutMapping("/update-status/order/{orderId}")
+    public ShipmentResponse updateShipmentStatusByOrderId(@PathVariable Long orderId,
+                                                          @Valid @RequestBody ShipmentStatusUpdateRequest request) {
+        return shipmentService.updateShipmentStatusByOrderId(orderId, request);
+    }
+
+    @PutMapping("/assign-delivery/order/{orderId}")
+    public ShipmentResponse assignDeliveryPersonByOrderId(@PathVariable Long orderId,
+                                                          @Valid @RequestBody DeliveryPersonAssignmentRequest request) {
+        return shipmentService.assignDeliveryPersonByOrderId(orderId, request);
     }
 }
