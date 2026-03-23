@@ -30,6 +30,10 @@ public class Shipment {
 
     private LocalDateTime shipmentDate;
 
+    private LocalDateTime estimatedDelivery;
+
+    private String deliveryPerson;
+
     public Long getShipmentId() {
         return shipmentId;
     }
@@ -92,5 +96,21 @@ public class Shipment {
 
     public void setShipmentDate(LocalDateTime shipmentDate) {
         this.shipmentDate = shipmentDate;
+    }
+
+    public LocalDateTime getEstimatedDelivery() {
+        return estimatedDelivery;
+    }
+
+    public void setEstimatedDelivery(LocalDateTime estimatedDelivery) {
+        this.estimatedDelivery = estimatedDelivery;
+    }
+
+    public String getDeliveryPerson() {
+        return deliveryPerson;
+    }
+
+    public void setDeliveryPerson(String deliveryPerson) {
+        this.deliveryPerson = deliveryPerson;
     }
 }

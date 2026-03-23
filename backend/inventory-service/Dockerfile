@@ -15,11 +15,15 @@ RUN mvn -B -q -DskipTests package
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 
+RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
+
 # Inventory service port
 EXPOSE 8083
 
 # Copy the built jar
-COPY --from=build /workspace/target/*SNAPSHOT.jar /app/app.jar
+COPY --from=build --chown=appuser:appgroup /workspace/target/*SNAPSHOT.jar /app/app.jar
+
+USER appuser
 
 # Run with container-friendly defaults
 ENV JAVA_OPTS="-XX:MaxRAMPercentage=75.0"
