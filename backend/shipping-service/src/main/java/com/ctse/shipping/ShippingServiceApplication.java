@@ -1,4 +1,4 @@
-package com.ctse.shipping_service;
+package com.ctse.shipping;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,27 +1,17 @@
 package com.ctse.shipping.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
-public class ShipmentCreateRequest {
-    @NotNull
+public class OrderDetailsResponse {
+
     private Long orderId;
-
-    @NotBlank
+    private String status;
+    private Double totalAmount;
+    private LocalDateTime orderDate;
     private String customerName;
-
-    @NotBlank
     private String contactNumber;
-
-    @NotBlank
     private String deliveryAddress;
-
-    @NotBlank
-    @Email
     private String email;
-
-    private String shipmentStatus;
 
     public Long getOrderId() {
         return orderId;
@@ -29,6 +19,30 @@ public class ShipmentCreateRequest {
 
     public void setOrderId(Long orderId) {
         this.orderId = orderId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Double getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(Double totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public LocalDateTime getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(LocalDateTime orderDate) {
+        this.orderDate = orderDate;
     }
 
     public String getCustomerName() {
@@ -61,13 +75,5 @@ public class ShipmentCreateRequest {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getShipmentStatus() {
-        return shipmentStatus;
-    }
-
-    public void setShipmentStatus(String shipmentStatus) {
-        this.shipmentStatus = shipmentStatus;
     }
 }
