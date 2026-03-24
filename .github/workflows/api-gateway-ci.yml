@@ -6,6 +6,7 @@ on:
       - 'backend/api-gateway/**'
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   build-api-gateway:
