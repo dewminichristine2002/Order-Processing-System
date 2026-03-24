@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+
+  api-gateway:
+    image: 20026460/order-processing-api-gateway:latest
+    build: ./api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      ORDER_SERVICE_URL: http://order-service:8081
+      PAYMENTS_SERVICE_URL: http://payment-service:8082
+      INVENTORY_SERVICE_URL: http://inventory-service:8083
+      SHIPPING_SERVICE_URL: http://shipping-service:8084
+    depends_on:
+      - order-service
+      - payment-service
+      - inventory-service
+      - shipping-service
+
+  order-service:
+    image: 20026460/order-processing-order-service:latest
+    build: ./order-service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: ${ORDER_DB_URL}
+      SPRING_DATASOURCE_USERNAME: ${ORDER_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${ORDER_DB_PASSWORD}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: ${ORDER_JPA_DDL_AUTO:-update}
+      SERVICES_PAYMENT_URL: http://api-gateway:8080/payments/process
+      SERVICES_INVENTORY_URL: http://api-gateway:8080/inventory/reduce-stock/
+      SERVICES_SHIPPING_URL: http://api-gateway:8080/shipping/from-order
+
+  payment-service:
+    image: 20026460/order-processing-payment-service:latest
+    build: ./payment-service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: ${PAYMENT_DB_URL}
+      SPRING_DATASOURCE_USERNAME: ${PAYMENT_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${PAYMENT_DB_PASSWORD}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: ${PAYMENT_JPA_DDL_AUTO:-update}
+      APP_ORDER_BASE_URL: http://api-gateway:8080
+      APP_INTERNAL_API_KEY: ${APP_INTERNAL_API_KEY}
+
+  inventory-service:
+    image: 20026460/order-processing-inventory-service:latest
+    build: ./inventory-service
+    ports:
+      - "8083:8083"
+    environment:
+      PORT: 8083
+      INVENTORY_DATASOURCE_URL: ${INVENTORY_DB_URL}
+      INVENTORY_DATASOURCE_USERNAME: ${INVENTORY_DB_USER}
+      INVENTORY_DATASOURCE_PASSWORD: ${INVENTORY_DB_PASSWORD}
+      INVENTORY_DATASOURCE_DRIVER: org.postgresql.Driver
+      INVENTORY_JPA_DDL_AUTO: ${INVENTORY_JPA_DDL_AUTO:-update}
+      ORDER_SERVICE_URL: http://api-gateway:8080
+      ORDER_SERVICE_INTEGRATION_ENABLED: "true"
+
+  shipping-service:
+    image: 20026460/order-processing-shipping-service:latest
+    build: ./shipping-service
+    ports:
+      - "8084:8084"
+    environment:
+      SPRING_DATASOURCE_URL: ${SHIPPING_DB_URL}
+      SPRING_DATASOURCE_USERNAME: ${SHIPPING_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${SHIPPING_DB_PASSWORD}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: ${SHIPPING_JPA_DDL_AUTO:-update}
+      ORDER_SERVICE_URL: http://api-gateway:8080
+      ORDER_SERVICE_INTEGRATION_ENABLED: "true"
