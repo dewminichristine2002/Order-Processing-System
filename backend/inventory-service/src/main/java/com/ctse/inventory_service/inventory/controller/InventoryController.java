@@ -1,6 +1,7 @@
 package com.ctse.inventory_service.inventory.controller;
 
 import com.ctse.inventory_service.inventory.dto.CreateProductRequest;
+import com.ctse.inventory_service.inventory.dto.IncreaseStockRequest;
 import com.ctse.inventory_service.inventory.dto.ProductResponse;
 import com.ctse.inventory_service.inventory.dto.ReduceStockRequest;
 import com.ctse.inventory_service.inventory.dto.StockUpdateResponse;
@@ -74,6 +75,14 @@ public class InventoryController {
             @Valid @RequestBody ReduceStockRequest request
     ) {
         return toStockUpdateResponse(inventoryService.reduceStock(productId, request));
+    }
+
+    @PutMapping("/increase-stock/{productId}")
+    public StockUpdateResponse increaseStock(
+            @PathVariable Integer productId,
+            @Valid @RequestBody IncreaseStockRequest request
+    ) {
+        return toStockUpdateResponse(inventoryService.increaseStock(productId, request));
     }
 
     /**

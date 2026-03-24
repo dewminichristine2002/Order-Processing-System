@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ctse.inventory_service.inventory.client.OrderServiceClient;
 import com.ctse.inventory_service.inventory.dto.CreateProductRequest;
+import com.ctse.inventory_service.inventory.dto.IncreaseStockRequest;
 import com.ctse.inventory_service.inventory.dto.ReduceStockRequest;
 import com.ctse.inventory_service.inventory.dto.UpdateProductRequest;
 import com.ctse.inventory_service.inventory.entity.Product;
@@ -95,6 +96,27 @@ public class InventoryService {
 
         notifyOrderServiceProcessingStatus(request.orderId());
         return savedUpdate;
+    }
+
+    @Transactional
+    public StockUpdate increaseStock(Integer productId, IncreaseStockRequest request) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException(productId));
+        int previousQty = product.getStockQuantity();
+        int addedQty = request.quantity();
+        int newQty = previousQty + addedQty;
+        product.setStockQuantity(newQty);
+        productRepository.save(product);
+
+        StockUpdate update = new StockUpdate();
+        update.setProductId(productId);
+        update.setPreviousQuantity(previousQty);
+        update.setNewQuantity(newQty);
+        update.setChangeAmount(addedQty);
+        update.setReason("INCREASE_STOCK");
+        update.setReferenceId(request.referenceId());
+        update.setCreatedAt(Instant.now());
+        return stockUpdateRepository.save(update);
     }
 
     private void notifyOrderServiceProcessingStatus(String orderId) {

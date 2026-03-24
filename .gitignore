@@ -1,1 +1,7 @@
 .vscode/
+
+# Local environment files (may contain secrets)
+.env
+.env.*
+!.env.example
+!.env.sample

@@ -1,11 +1,9 @@
 package com.ctse.payment_service.client;
 
 import org.springframework.beans.factory.annotation.Value;
-
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -23,7 +21,6 @@ public class OrderClient {
     public void updateOrderStatus(Long orderId, String status) {
         String url = orderBaseUrl + "/orders/update-status/" + orderId + "?status=" + status;
 
-
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-INTERNAL-API-KEY", internalApiKey);
 
@@ -31,9 +28,7 @@ public class OrderClient {
         restTemplate.exchange(url, HttpMethod.PUT, entity, Void.class);
     }
 
-
     public void updateOrderStatusPaid(Long orderId) {
         updateOrderStatus(orderId, "PAID");
     }
-
 }
