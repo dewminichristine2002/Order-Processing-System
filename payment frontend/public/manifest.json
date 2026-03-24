@@ -1,9 +1,0 @@
-{
-  "short_name": "Payment Service",
-  "name": "Payment Service Application",
-  "icons": [],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
-}
