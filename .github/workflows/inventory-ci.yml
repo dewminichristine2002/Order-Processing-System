@@ -6,6 +6,7 @@ on:
       - 'backend/inventory-service/**'
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   build-inventory:
