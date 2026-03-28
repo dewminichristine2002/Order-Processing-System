@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 
 public record UpdateProductRequest(
         @NotBlank String productName,
-        @NotNull @Min(0) Integer stockQuantity,
+        String imageUrl,
         @NotNull @DecimalMin(value = "0.00") BigDecimal price
 ) {
 }

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,6 +65,7 @@ public class InventoryService {
         Product product = new Product();
         product.setProductId(request.productId());
         product.setProductName(request.productName());
+        product.setImageUrl(request.imageUrl());
         product.setStockQuantity(request.stockQuantity());
         product.setPrice(request.price());
         return productRepository.save(product);
@@ -139,22 +141,10 @@ public class InventoryService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
 
-        int previousQty = product.getStockQuantity();
-        int newQty = request.stockQuantity();
-        if (previousQty != newQty) {
-            StockUpdate update = new StockUpdate();
-            update.setProductId(productId);
-            update.setPreviousQuantity(previousQty);
-            update.setNewQuantity(newQty);
-            update.setChangeAmount(newQty - previousQty);
-            update.setReason("ADMIN_SET_STOCK");
-            update.setReferenceId("ADMIN");
-            update.setCreatedAt(Instant.now());
-            stockUpdateRepository.save(update);
-        }
-
         product.setProductName(request.productName());
-        product.setStockQuantity(newQty);
+        if (request.imageUrl() != null) {
+            product.setImageUrl(request.imageUrl());
+        }
         product.setPrice(request.price());
         return productRepository.save(product);
     }
@@ -173,6 +163,13 @@ public class InventoryService {
             return stockUpdateRepository.findAll(pageable);
         }
         return stockUpdateRepository.findByProductIdOrderByCreatedAtDesc(productId, pageable);
+    }
+
+    public List<StockUpdate> getAllStockUpdates(Integer productId) {
+        if (productId == null) {
+            return stockUpdateRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
+        }
+        return stockUpdateRepository.findByProductIdOrderByCreatedAtDesc(productId);
     }
 
 

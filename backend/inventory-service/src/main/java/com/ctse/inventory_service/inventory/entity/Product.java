@@ -33,6 +33,9 @@ public class Product {
     @Column(name = "price", nullable = false, precision = 19, scale = 2)
     private BigDecimal price;
 
+    @Column(name = "image_url", length = 1024)
+    private String imageUrl;
+
     public Integer getProductId() {
         return productId;
     }
@@ -63,5 +66,13 @@ public class Product {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

@@ -99,10 +99,20 @@ public class InventoryController {
                 .map(InventoryController::toStockUpdateResponse);
     }
 
+        @GetMapping("/stock-updates/all")
+        public List<StockUpdateResponse> getAllStockUpdates(
+            @RequestParam(required = false) Integer productId
+        ) {
+        return inventoryService.getAllStockUpdates(productId).stream()
+            .map(InventoryController::toStockUpdateResponse)
+            .toList();
+        }
+
     private static ProductResponse toProductResponse(Product product) {
         return new ProductResponse(
                 product.getProductId(),
                 product.getProductName(),
+                product.getImageUrl(),
                 product.getStockQuantity(),
                 product.getPrice()
         );
