@@ -1258,145 +1258,146 @@ function App() {
     <div className="app-shell">
       <ToastStack notice={notice} error={error} />
 
-      <section className="app-topbar" aria-label="System Header and Navigation">
-        <header className="brand-header" aria-label="System Header">
-          <div className="brand-header-mark">S</div>
-          <div className="brand-header-copy">
-            <p className="brand-header-label">Management System</p>
-            <h1>SoleX Order Control</h1>
-          </div>
-        </header>
+      <div className="content-shell">
+        <section className="app-topbar" aria-label="System Header and Navigation">
+          <header className="brand-header" aria-label="System Header">
+            <div className="brand-header-mark">S</div>
+            <div className="brand-header-copy">
+              <p className="brand-header-label">Management System</p>
+              <h1>SoleX Order Control</h1>
+            </div>
+          </header>
 
-        <PageTabs
-          page={page}
-          nextStep={nextStep}
-          cartItemCount={cartItemCount}
-          orderId={orderId}
-          cartLength={cart.length}
-          onChange={setPage}
-        />
-      </section>
+          <PageTabs
+            page={page}
+            nextStep={nextStep}
+            cartItemCount={cartItemCount}
+            orderId={orderId}
+            cartLength={cart.length}
+            onChange={setPage}
+          />
+        </section>
 
-      <FlowBanner nextStep={nextStep} />
+        <FlowBanner nextStep={nextStep} />
 
-      <NoticeBanner notice={notice} error={error} />
+        <NoticeBanner notice={notice} error={error} />
 
-      {loading && page === "catalog" ? (
-        <section className="panel loading-panel">Loading products...</section>
-      ) : null}
+        {loading && page === "catalog" ? (
+          <section className="panel loading-panel">Loading products...</section>
+        ) : null}
 
-      {page === "catalog" && (
-        <CatalogPage
-          loading={loading}
-          products={products}
-          formatMoney={formatMoney}
-          addToCartQuantities={addToCartQuantities}
-          setAddToCartQuantities={setAddToCartQuantities}
-          handleAddToCart={handleAddToCart}
-        />
-      )}
+        {page === "catalog" && (
+          <CatalogPage
+            loading={loading}
+            products={products}
+            formatMoney={formatMoney}
+            addToCartQuantities={addToCartQuantities}
+            setAddToCartQuantities={setAddToCartQuantities}
+            handleAddToCart={handleAddToCart}
+          />
+        )}
 
-      {page === "inventory-management" && (
-        <InventoryPage
-          actionInFlight={actionInFlight}
-          ButtonLabel={ButtonLabel}
-          TableSkeleton={TableSkeleton}
-          products={products}
-          formatMoney={formatMoney}
-          imageUploadEnabled={IMAGE_UPLOAD_ENABLED}
-          inventorySearchQuery={inventorySearchQuery}
-          setInventorySearchQuery={setInventorySearchQuery}
-          inventoryCreateForm={inventoryCreateForm}
-          setInventoryCreateForm={setInventoryCreateForm}
-          handleCreateInventoryItem={handleCreateInventoryItem}
-          inventoryIncreaseForm={inventoryIncreaseForm}
-          setInventoryIncreaseForm={setInventoryIncreaseForm}
-          handleIncreaseInventoryStock={handleIncreaseInventoryStock}
-          inventoryEditForm={inventoryEditForm}
-          setInventoryEditForm={setInventoryEditForm}
-          handleStartEditInventoryItem={handleStartEditInventoryItem}
-          handleCancelEditInventoryItem={handleCancelEditInventoryItem}
-          handleUpdateInventoryItem={handleUpdateInventoryItem}
-          handleDeleteInventoryItem={handleDeleteInventoryItem}
-          handleLoadStockUpdates={handleLoadStockUpdates}
-          pendingAction={pendingAction}
-          stockUpdates={stockUpdates}
-          formatDate={formatDate}
-        />
-      )}
+        {page === "inventory-management" && (
+          <InventoryPage
+            actionInFlight={actionInFlight}
+            ButtonLabel={ButtonLabel}
+            TableSkeleton={TableSkeleton}
+            products={products}
+            formatMoney={formatMoney}
+            imageUploadEnabled={IMAGE_UPLOAD_ENABLED}
+            inventorySearchQuery={inventorySearchQuery}
+            setInventorySearchQuery={setInventorySearchQuery}
+            inventoryCreateForm={inventoryCreateForm}
+            setInventoryCreateForm={setInventoryCreateForm}
+            handleCreateInventoryItem={handleCreateInventoryItem}
+            inventoryIncreaseForm={inventoryIncreaseForm}
+            setInventoryIncreaseForm={setInventoryIncreaseForm}
+            handleIncreaseInventoryStock={handleIncreaseInventoryStock}
+            inventoryEditForm={inventoryEditForm}
+            setInventoryEditForm={setInventoryEditForm}
+            handleStartEditInventoryItem={handleStartEditInventoryItem}
+            handleCancelEditInventoryItem={handleCancelEditInventoryItem}
+            handleUpdateInventoryItem={handleUpdateInventoryItem}
+            handleDeleteInventoryItem={handleDeleteInventoryItem}
+            handleLoadStockUpdates={handleLoadStockUpdates}
+            pendingAction={pendingAction}
+            stockUpdates={stockUpdates}
+            formatDate={formatDate}
+          />
+        )}
 
-      {page === "cart" && (
-        <CartPage
-          actionInFlight={actionInFlight}
-          ButtonLabel={ButtonLabel}
-          pendingAction={pendingAction}
-          cart={cart}
-          cartItemCount={cartItemCount}
-          cartSubtotal={cartSubtotal}
-          cartTotal={cartTotal}
-          formatMoney={formatMoney}
-          customerForm={customerForm}
-          setCustomerForm={setCustomerForm}
-          handleCreateOrder={handleCreateOrder}
-          handleCartQuantityChange={handleCartQuantityChange}
-          handleRemoveFromCart={handleRemoveFromCart}
-          handleClearCart={handleClearCart}
-          setPage={setPage}
-        />
-      )}
+        {page === "cart" && (
+          <CartPage
+            actionInFlight={actionInFlight}
+            ButtonLabel={ButtonLabel}
+            pendingAction={pendingAction}
+            cart={cart}
+            cartItemCount={cartItemCount}
+            cartSubtotal={cartSubtotal}
+            cartTotal={cartTotal}
+            formatMoney={formatMoney}
+            customerForm={customerForm}
+            setCustomerForm={setCustomerForm}
+            handleCreateOrder={handleCreateOrder}
+            handleCartQuantityChange={handleCartQuantityChange}
+            handleRemoveFromCart={handleRemoveFromCart}
+            handleClearCart={handleClearCart}
+            setPage={setPage}
+          />
+        )}
 
-      {page === "history" && (
-        <HistoryPage
-          actionInFlight={actionInFlight}
-          ButtonLabel={ButtonLabel}
-          TableSkeleton={TableSkeleton}
-          pendingAction={pendingAction}
-          formatMoney={formatMoney}
-          allOrders={allOrders}
-          orderSearchQuery={orderSearchQuery}
-          setOrderSearchQuery={setOrderSearchQuery}
-          handleLoadAllOrders={handleLoadAllOrders}
-          handleViewOrderDetails={handleViewOrderDetails}
-          allPayments={allPayments}
-          paymentSearchQuery={paymentSearchQuery}
-          setPaymentSearchQuery={setPaymentSearchQuery}
-          handleLoadAllPayments={handleLoadAllPayments}
-          handleViewPaymentDetails={handleViewPaymentDetails}
-          allShipments={allShipments}
-          shipmentSearchQuery={shipmentSearchQuery}
-          setShipmentSearchQuery={setShipmentSearchQuery}
-          handleLoadAllShipments={handleLoadAllShipments}
-          handleViewShipmentDetails={handleViewShipmentDetails}
-          formatDate={formatDate}
-        />
-      )}
+        {page === "history" && (
+          <HistoryPage
+            actionInFlight={actionInFlight}
+            ButtonLabel={ButtonLabel}
+            TableSkeleton={TableSkeleton}
+            pendingAction={pendingAction}
+            formatMoney={formatMoney}
+            allOrders={allOrders}
+            orderSearchQuery={orderSearchQuery}
+            setOrderSearchQuery={setOrderSearchQuery}
+            handleLoadAllOrders={handleLoadAllOrders}
+            handleViewOrderDetails={handleViewOrderDetails}
+            allPayments={allPayments}
+            paymentSearchQuery={paymentSearchQuery}
+            setPaymentSearchQuery={setPaymentSearchQuery}
+            handleLoadAllPayments={handleLoadAllPayments}
+            handleViewPaymentDetails={handleViewPaymentDetails}
+            allShipments={allShipments}
+            shipmentSearchQuery={shipmentSearchQuery}
+            setShipmentSearchQuery={setShipmentSearchQuery}
+            handleLoadAllShipments={handleLoadAllShipments}
+            handleViewShipmentDetails={handleViewShipmentDetails}
+            formatDate={formatDate}
+          />
+        )}
 
-      {page === "payment" && (
-        <PaymentPage
-          actionInFlight={actionInFlight}
-          ButtonLabel={ButtonLabel}
-          DetailCardSkeleton={DetailCardSkeleton}
-          pendingAction={pendingAction}
-          formatMoney={formatMoney}
-          setPage={setPage}
-          currentOrderSnapshot={currentOrderSnapshot}
-          orderId={orderId}
-          expectedPaymentAmount={expectedPaymentAmount}
-          paymentForm={paymentForm}
-          setPaymentForm={setPaymentForm}
-          handlePaymentMethodChange={handlePaymentMethodChange}
-          PAYMENT_METHODS={PAYMENT_METHODS}
-          paymentBalance={paymentBalance}
-          handleVerifyPaymentDetails={handleVerifyPaymentDetails}
-          paymentVerified={paymentVerified}
-          handleProcessPayment={handleProcessPayment}
-          handleLoadPaymentStatus={handleLoadPaymentStatus}
-          paymentData={paymentData}
-          handleConfirmPayment={handleConfirmPayment}
-          getPaymentStage={getPaymentStage}
-          formatDate={formatDate}
-        />
-      )}
+        {page === "payment" && (
+          <PaymentPage
+            actionInFlight={actionInFlight}
+            ButtonLabel={ButtonLabel}
+            DetailCardSkeleton={DetailCardSkeleton}
+            pendingAction={pendingAction}
+            formatMoney={formatMoney}
+            setPage={setPage}
+            currentOrderSnapshot={currentOrderSnapshot}
+            orderId={orderId}
+            expectedPaymentAmount={expectedPaymentAmount}
+            paymentForm={paymentForm}
+            setPaymentForm={setPaymentForm}
+            handlePaymentMethodChange={handlePaymentMethodChange}
+            PAYMENT_METHODS={PAYMENT_METHODS}
+            paymentBalance={paymentBalance}
+            handleVerifyPaymentDetails={handleVerifyPaymentDetails}
+            paymentVerified={paymentVerified}
+            handleProcessPayment={handleProcessPayment}
+            handleLoadPaymentStatus={handleLoadPaymentStatus}
+            paymentData={paymentData}
+            handleConfirmPayment={handleConfirmPayment}
+            getPaymentStage={getPaymentStage}
+            formatDate={formatDate}
+          />
+        )}
 
       {/* CART PAGE */}
       {false && page === "cart" && (
@@ -2501,6 +2502,20 @@ function App() {
           )}
         </main>
       )}
+
+        <footer className="app-footer">
+          <div className="app-footer-content">
+            <div>
+              <strong>SoleX Order Control</strong>
+              <span>Unified order, payment, and shipment hub</span>
+            </div>
+            <div>
+              <span>Order Processing System</span>
+              <span>© {new Date().getFullYear()} SoleX Retail Operations</span>
+            </div>
+          </div>
+        </footer>
+      </div>
     </div>
   );
 }
