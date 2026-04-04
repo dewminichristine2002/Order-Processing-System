@@ -14,7 +14,10 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/shipping/**")
-                        .allowedOrigins("http://localhost:3000")
+                    .allowedOrigins(
+                        "http://localhost:3000",
+                        "https://black-wave-076c3e100.4.azurestaticapps.net"
+                    )
                         .allowedMethods("GET", "POST", "PUT", "OPTIONS")
                         .allowedHeaders("*");
             }

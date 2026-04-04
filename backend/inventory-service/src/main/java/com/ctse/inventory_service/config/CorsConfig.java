@@ -12,7 +12,8 @@ public class CorsConfig implements WebMvcConfigurer {
         registry.addMapping("/inventory/**")
                 .allowedOriginPatterns(
                         "http://localhost:*",
-                        "http://127.0.0.1:*"
+                        "http://127.0.0.1:*",
+                        "https://black-wave-076c3e100.4.azurestaticapps.net"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
@@ -21,7 +22,8 @@ public class CorsConfig implements WebMvcConfigurer {
         registry.addMapping("/v3/api-docs/**")
                 .allowedOriginPatterns(
                         "http://localhost:*",
-                        "http://127.0.0.1:*"
+                        "http://127.0.0.1:*",
+                        "https://black-wave-076c3e100.4.azurestaticapps.net"
                 )
                 .allowedMethods("GET", "OPTIONS")
                 .allowedHeaders("*")
@@ -30,7 +32,8 @@ public class CorsConfig implements WebMvcConfigurer {
         registry.addMapping("/swagger-ui/**")
                 .allowedOriginPatterns(
                         "http://localhost:*",
-                        "http://127.0.0.1:*"
+                        "http://127.0.0.1:*",
+                        "https://black-wave-076c3e100.4.azurestaticapps.net"
                 )
                 .allowedMethods("GET", "OPTIONS")
                 .allowedHeaders("*")

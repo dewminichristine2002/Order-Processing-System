@@ -1,13 +1,13 @@
 package com.ctse.payment_service.config;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * CORS configuration.
@@ -29,7 +29,10 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        config.setAllowedOrigins(Arrays.asList(
+            "http://localhost:3000",
+            "https://black-wave-076c3e100.4.azurestaticapps.net"
+        ));
 
         // Explicit header allowlist – never use "*" alongside allowCredentials=true
         config.setAllowedHeaders(List.of(
