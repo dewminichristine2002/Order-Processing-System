@@ -13,29 +13,15 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/inventory/**")
+
+                registry.addMapping("/**")
                         .allowedOrigins(
                                 "http://localhost:3000",
                                 "https://black-wave-076c3e100.4.azurestaticapps.net"
                         )
-                    .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                    .allowedHeaders("*");
-
-                registry.addMapping("/v3/api-docs/**")
-                    .allowedOrigins(
-                        "http://localhost:3000",
-                        "https://black-wave-076c3e100.4.azurestaticapps.net"
-                    )
-                    .allowedMethods("GET", "OPTIONS")
-                    .allowedHeaders("*");
-
-                registry.addMapping("/swagger-ui/**")
-                    .allowedOrigins(
-                        "http://localhost:3000",
-                        "https://black-wave-076c3e100.4.azurestaticapps.net"
-                    )
-                    .allowedMethods("GET", "OPTIONS")
-                    .allowedHeaders("*");
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
             }
         };
     }
