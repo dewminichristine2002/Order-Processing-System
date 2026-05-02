@@ -1,6 +1,7 @@
 package com.ctse.inventory_service.inventory.controller;
 
 import com.ctse.inventory_service.inventory.dto.CreateProductRequest;
+import com.ctse.inventory_service.inventory.dto.IncreaseStockRequest;
 import com.ctse.inventory_service.inventory.dto.ProductResponse;
 import com.ctse.inventory_service.inventory.dto.ReduceStockRequest;
 import com.ctse.inventory_service.inventory.dto.StockUpdateResponse;
@@ -76,6 +77,14 @@ public class InventoryController {
         return toStockUpdateResponse(inventoryService.reduceStock(productId, request));
     }
 
+    @PutMapping("/increase-stock/{productId}")
+    public StockUpdateResponse increaseStock(
+            @PathVariable Integer productId,
+            @Valid @RequestBody IncreaseStockRequest request
+    ) {
+        return toStockUpdateResponse(inventoryService.increaseStock(productId, request));
+    }
+
     /**
      * Optional helper endpoint for tracking stock updates.
      */
@@ -90,10 +99,20 @@ public class InventoryController {
                 .map(InventoryController::toStockUpdateResponse);
     }
 
+        @GetMapping("/stock-updates/all")
+        public List<StockUpdateResponse> getAllStockUpdates(
+            @RequestParam(required = false) Integer productId
+        ) {
+        return inventoryService.getAllStockUpdates(productId).stream()
+            .map(InventoryController::toStockUpdateResponse)
+            .toList();
+        }
+
     private static ProductResponse toProductResponse(Product product) {
         return new ProductResponse(
                 product.getProductId(),
                 product.getProductName(),
+                product.getImageUrl(),
                 product.getStockQuantity(),
                 product.getPrice()
         );

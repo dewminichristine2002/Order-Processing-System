@@ -3,7 +3,6 @@ package com.ctse.payment_service.config;
 import com.ctse.payment_service.security.ApiKeyAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -18,7 +17,7 @@ import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWrite
  * Security decisions:
  *  - STATELESS sessions: REST API uses no HttpSession / cookies.
  *  - CSRF disabled: safe for stateless APIs (no session cookies).
- *  - CORS handled via the CorsConfigurationSource bean in CorsConfig.
+ *  - CORS is handled at API Gateway level to avoid duplicate CORS headers.
  *  - API key filter: validates X-Internal-API-Key when present; rejects wrong keys.
  *  - Permit all for payment & Swagger endpoints (accessible from browser/frontend).
  *  - Actuator health/info are public for Kubernetes liveness & readiness probes.
@@ -43,9 +42,6 @@ public class SecurityConfig {
 
             // ── CSRF: disabled for stateless REST API ─────────────────────────
             .csrf(AbstractHttpConfigurer::disable)
-
-            // ── CORS: delegate to CorsConfigurationSource bean in CorsConfig ──
-            .cors(Customizer.withDefaults())
 
             // ── Security response headers ─────────────────────────────────────
             .headers(headers -> headers
@@ -75,6 +71,8 @@ public class SecurityConfig {
 
             // ── Authorisation rules ───────────────────────────────────────────
             .authorizeHttpRequests(auth -> auth
+                // Public root/error endpoints for basic browser access checks
+                .requestMatchers("/", "/error").permitAll()
                 // Kubernetes probes – no auth required
                 .requestMatchers(
                     "/actuator/health",
