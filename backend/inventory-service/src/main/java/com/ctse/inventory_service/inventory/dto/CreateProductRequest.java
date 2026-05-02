@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 public record CreateProductRequest(
         @NotNull Integer productId,
         @NotBlank String productName,
+        String imageUrl,
         @NotNull @Min(0) Integer stockQuantity,
         @NotNull @DecimalMin("0.00") BigDecimal price
 ) {
