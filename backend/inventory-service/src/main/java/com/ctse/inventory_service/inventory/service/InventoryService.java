@@ -145,6 +145,9 @@ public class InventoryService {
         if (request.imageUrl() != null) {
             product.setImageUrl(request.imageUrl());
         }
+        if (request.stockQuantity() != null) {
+            product.setStockQuantity(request.stockQuantity());
+        }
         product.setPrice(request.price());
         return productRepository.save(product);
     }
